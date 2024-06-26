@@ -40,7 +40,7 @@ def decrypt(pk, ciphertext):
     return ''.join(plain)
 
 # Generating public and private keys
-public, private = generate_keypair(8)  # Using 8 bits for simplicity; use 1024 or 2048 bits for real applications
+public, private = generate_keypair(8)  
 print("Public key:", public)
 print("Private key:", private)
 
