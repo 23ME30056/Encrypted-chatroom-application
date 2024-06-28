@@ -1,54 +1,56 @@
 import random
-from sympy import isprime, mod_inverse
+import math
 
-def generate_large_prime(keysize=1024):
-    while True:
-        num = random.getrandbits(keysize)
-        if isprime(num):
-            return num
+def is_prime(number):
+    if number < 2:
+        return False
+    count = 0
+    for i in range(1, number+1):
+        if number % i == 0:
+            count += 1
+    if count == 2:
+        return True
+    else:
+        return False
 
-def generate_keypair(keysize):
-    p = generate_large_prime(keysize)
-    q = generate_large_prime(keysize)
-    
-    n = p * q
-    phi = (p - 1) * (q - 1)
-    
-    e = random.randrange(1, phi)
-    g = gcd(e, phi)
-    while g != 1:
-        e = random.randrange(1, phi)
-        g = gcd(e, phi)
-    
-    d = mod_inverse(e, phi)
-    
-    return ((e, n), (d, n))
+def generate_prime(min_value, max_value):
+    prime = random.randint(min_value, max_value)
+    while not is_prime(prime):
+        prime = random.randint(min_value, max_value)
+    return prime
 
-def gcd(a, b):
-    while b != 0:
-        a, b = b, a % b
-    return a
+def mod_inverse(e, phi):
+    for d in range(3, phi):
+        if (d * e) % phi == 1:  # generating multiplicative inverse of e
+            return d
+    raise ValueError("mod_inverse does not exist")
 
-def encrypt(pk, plaintext):
-    key, n = pk
-    cipher = [(ord(char) ** key) % n for char in plaintext]
-    return cipher
+p = generate_prime(1000, 8000)   # random numbers
+q = generate_prime(1000, 8000)
+while p == q:
+    q = generate_prime(1000, 8000)
 
-def decrypt(pk, ciphertext):
-    key, n = pk
-    plain = [chr((char ** key) % n) for char in ciphertext]
-    return ''.join(plain)
+n = p * q
+phi_n = (p - 1) * (q - 1)
 
-# Generating public and private keys
-public, private = generate_keypair(8)  
-print("Public key:", public)
-print("Private key:", private)
+e = random.randint(3, phi_n - 1)
+while math.gcd(e, phi_n) != 1:                   # generating coprime numbers
+    e = random.randint(3, phi_n - 1)
 
-# Encrypting a message
-message = "hello"
-encrypted_msg = encrypt(public, message)
-print("Encrypted message:", encrypted_msg)
+d = mod_inverse(e, phi_n)
 
-# Decrypting the message
-decrypted_msg = decrypt(private, encrypted_msg)
-print("Decrypted message:", decrypted_msg)
+print("Public key:", e)                   # 
+print("Private key:", d)
+print("n:", n)
+print("phi of n is:", phi_n)
+print("p:", p)
+print("q:", q)
+
+message = "Hi baby girl"
+encode = [ord(ch) for ch in message]
+cipher = [pow(ch, e, n) for ch in encode]  # encrypt it to cipher    # c = m^e mod n
+print("Cipher text:", cipher)
+
+decode = [pow(ch, d, n) for ch in cipher]  # decrypt back to ASCII  # m = c^d mod n
+msg = "".join(chr(ch) for ch in decode)
+print("Decrypted message:", msg)
