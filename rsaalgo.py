@@ -39,16 +39,16 @@ while math.gcd(e, phi_n) != 1:                   # generating coprime numbers
 
 d = mod_inverse(e, phi_n)
 
-print("Public key:", e)                   # 
+print("Public key:", e)                   # e is public key and d is the private key
 print("Private key:", d)
 print("n:", n)
 print("phi of n is:", phi_n)
 print("p:", p)
 print("q:", q)
-
-message = "Hi baby girl"
+message = input("input message :")
+# message = "Hi baby girl"
 encode = [ord(ch) for ch in message]
-cipher = [pow(ch, e, n) for ch in encode]  # encrypt it to cipher    # c = m^e mod n
+cipher = [pow(ch, e, n) for ch in encode]  # encrypting it to cipher    # c = m^e mod n
 print("Cipher text:", cipher)
 
 decode = [pow(ch, d, n) for ch in cipher]  # decrypt back to ASCII  # m = c^d mod n
