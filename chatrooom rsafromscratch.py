@@ -28,7 +28,7 @@ def mod_inverse(e, phi):
 p = generate_prime(1000, 8000)
 q = generate_prime(1000, 8000)
 while p == q:
-    q = generate_prime(100, 800)
+    q = generate_prime(1000, 8000)
 
 #  n and Euler's totient function phi(n)
 n = p * q
